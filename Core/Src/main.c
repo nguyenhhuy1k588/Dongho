@@ -19,7 +19,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "ssd1306.h"
+#include "fonts.h"
+#include "stdio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 uint32_t bat;
@@ -113,6 +115,9 @@ void Get_Time_function (void)
 	time.Month = bcdtodec(get_time[4]);
 	time.Year = bcdtodec(get_time[5]);
 }
+
+char string[20],*p;
+
 /* USER CODE END 0 */
 
 /**
@@ -147,9 +152,11 @@ int main(void)
   MX_ADC_Init();
   MX_I2C1_Init();
   MX_TIM3_Init();
+  SSD1306_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc,&bat,1);
   Set_Time_function(00,10,4,17,2,21);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -157,7 +164,23 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  float v=(bat/4096)*4.2;
+	  Get_Time_function();
+	  sprintf(string,"%02d:%02d", time.Hour, time.Minutes);
+	  puts(string);
+	  SSD1306_GotoXY(0,2);
+	  SSD1306_Puts(string,  &Font_7x10,1);
 
+	  sprintf(string,"%02d-%02d-%02d", time.Date, time.Month,time.Year);
+	  puts(string);
+	  SSD1306_GotoXY(0,20);
+	  SSD1306_Puts(string, &Font_7x10,1);
+
+	  sprintf(string,"V=%5.2f",v);
+	  puts(string);
+	  SSD1306_GotoXY(100,2);
+	  SSD1306_Puts(string, &Font_7x10,1);
+	  HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -408,9 +431,16 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : BTN_1_Pin INT_Pin BTN_3_Pin BTN_4_Pin */
   GPIO_InitStruct.Pin = BTN_1_Pin|INT_Pin|BTN_3_Pin|BTN_4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI2_3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 
 }
 

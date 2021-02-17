@@ -66,12 +66,16 @@ void Error_Handler(void);
 #define BAT__GPIO_Port GPIOA
 #define BTN_1_Pin GPIO_PIN_2
 #define BTN_1_GPIO_Port GPIOA
+#define BTN_1_EXTI_IRQn EXTI2_3_IRQn
 #define INT_Pin GPIO_PIN_3
 #define INT_GPIO_Port GPIOA
+#define INT_EXTI_IRQn EXTI2_3_IRQn
 #define BTN_3_Pin GPIO_PIN_4
 #define BTN_3_GPIO_Port GPIOA
+#define BTN_3_EXTI_IRQn EXTI4_15_IRQn
 #define BTN_4_Pin GPIO_PIN_5
 #define BTN_4_GPIO_Port GPIOA
+#define BTN_4_EXTI_IRQn EXTI4_15_IRQn
 #define PWMR_Pin GPIO_PIN_7
 #define PWMR_GPIO_Port GPIOA
 #define PWMG_Pin GPIO_PIN_0
